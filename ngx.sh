@@ -2,7 +2,7 @@
 
 # source: https://github.com/xddxdd/dockerfiles/blob/master/dockerfiles/nginx/template.Dockerfile
 # Run: bash ngx.sh
-# dependencies: build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers openldap-dev util-linux binutils
+# dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers openldap-dev util-linux binutils
 
 NGINX_VERSION="1.17.6"
 OPENSSL_VERSION="1.1.1d"
