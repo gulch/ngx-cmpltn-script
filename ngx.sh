@@ -5,7 +5,7 @@
 # Run: bash ngx.sh
 # dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers openldap-dev util-linux binutils
 
-NGINX_VERSION="1.17.7"
+NGINX_VERSION="1.17.8"
 OPENSSL_VERSION="1.1.1d"
 
 cd /tmp \
