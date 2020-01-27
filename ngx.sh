@@ -76,5 +76,5 @@ cd /tmp \
 && echo " ===== Nginx Configured =====" \
 && make -j4 \
 && echo " ===== Nginx Compiled =====" \
-&& checkinstall --pkgname=nginx --pkgversion=${NGINX_VERSION}-47GULCH --nodoc \
+&& checkinstall --pkgname=nginx --pkgversion=${NGINX_VERSION}-47GULCH --nodoc --install=no \
 && echo " ===== Nginx Package Created ====="
