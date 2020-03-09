@@ -5,7 +5,7 @@
 # Run: bash ngx.sh
 # dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers openldap-dev util-linux binutils
 
-NGINX_VERSION="1.17.8"
+NGINX_VERSION="1.17.9"
 OPENSSL_VERSION="1.1.1d"
 
 cd /tmp \
@@ -15,8 +15,8 @@ cd /tmp \
 && tar xf nginx-${NGINX_VERSION}.tar.gz \
 && cd nginx-${NGINX_VERSION} \
 && echo " ===== Nginx $NGINX_VERSION downloaded =====" \
-&& wget -q https://github.com/kn007/patch/raw/master/nginx.patch \
-&& patch -p1 < nginx.patch \
+&& wget -q https://raw.githubusercontent.com/kn007/patch/master/nginx_with_spdy.patch \
+&& patch -p1 < nginx_with_spdy.patch \
 && echo " ===== Nginx Patched =====" \
 && wget -q https://github.com/hakasenyang/openssl-patch/raw/master/nginx_strict-sni_1.15.10.patch \
 && patch -p1 < nginx_strict-sni_1.15.10.patch \
