@@ -8,8 +8,8 @@
 #  - https://github.com/kn007/patch 
 #  - https://github.com/hakasenyang/openssl-patch
 
-NGINX_VERSION="1.19.1"
-OPENSSL_VERSION="1.1.1g"
+NGINX_VERSION="1.19.10"
+OPENSSL_VERSION="1.1.1k"
 
 cd /tmp \
 && mkdir ngx-${NGINX_VERSION} \
