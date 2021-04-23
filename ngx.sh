@@ -5,11 +5,12 @@
 # Run: bash ngx.sh
 # Dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers openldap-dev util-linux binutils
 # Patches: 
-#  - https://github.com/kn007/patch 
+#  - https://github.com/kn007/patch
 #  - https://github.com/hakasenyang/openssl-patch
 
 NGINX_VERSION="1.19.10"
 OPENSSL_VERSION="1.1.1k"
+CURRENT_DATE=$(date +'%Y%m%d')
 
 cd /tmp \
 && mkdir ngx-${NGINX_VERSION} \
@@ -67,5 +68,5 @@ cd /tmp \
 && echo " ===== Nginx Configured =====" \
 && make -j4 \
 && echo " ===== Nginx Compiled =====" \
-&& checkinstall --pkgname=nginx --pkgversion=${NGINX_VERSION}-47GULCH --nodoc --install=no \
+&& checkinstall --pkgname=nginx --pkgversion=${NGINX_VERSION}-${CURRENT_DATE} --nodoc --install=no \
 && echo " ===== Nginx Package Created ====="
