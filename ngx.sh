@@ -3,22 +3,18 @@
 # Nginx Compilation Script for Debian-based amd64 OS
 # Source: https://github.com/xddxdd/dockerfiles/blob/master/dockerfiles/nginx/template.Dockerfile
 # Run: bash ngx.sh
-# Dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers openldap-dev util-linux binutils
+# Dependencies: checkinstall git autoconf automake libtool wget tar libpcre3-dev zlib1g-dev libatomic-ops-dev unzip patch util-linux binutils
 # Patches: 
-#  - 
-#  - https://github.com/hakasenyang/openssl-patch
+#  - https://github.com/kn007/patch
 
-NGINX_VERSION="1.21.3"
+NGINX_VERSION="1.21.4"
 OPENSSL_VERSION="3.0.0"
-PCRE_VERSION="10.38"
 CURRENT_DATE=$(date +'%Y%m%d')
 
 cd /tmp \
-&& mkdir ngx-${NGINX_VERSION} \
-&& cd ngx-${NGINX_VERSION} \
+&& mkdir ngx-${NGINX_VERSION} && cd ngx-${NGINX_VERSION} \
 && wget -q http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
-&& tar xf nginx-${NGINX_VERSION}.tar.gz \
-&& cd nginx-${NGINX_VERSION} \
+&& tar xf nginx-${NGINX_VERSION}.tar.gz && cd nginx-${NGINX_VERSION} \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Nginx $NGINX_VERSION downloaded " \
@@ -29,13 +25,6 @@ cd /tmp \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Nginx Patched by kn007 " \
-&& echo "  *" \
-&& echo "*" \
-&& wget -q https://raw.githubusercontent.com/kn007/patch/master/use_openssl_md5_sha1.patch \
-&& patch -p1 < use_openssl_md5_sha1.patch \
-&& echo "*" \
-&& echo "  *" \
-&& echo "    *  Nginx Patched by MD5 SHA1 patch " \
 && echo "  *" \
 && echo "*" \
 && cd .. \
@@ -50,22 +39,13 @@ cd /tmp \
 && echo "    *  Nginx Modules Downloaded " \
 && echo "  *" \
 && echo "*" \
-&& git clone https://github.com/cloudflare/zlib.git \
-&& cd zlib && make -f Makefile.in distclean && cd .. \
+&& git clone https://github.com/cloudflare/zlib.git && cd zlib && make -f Makefile.in distclean && cd .. \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Zlib Downloaded & Compiled " \
 && echo "  *" \
 && echo "*" \
-&& wget -q https://github.com/PhilipHazel/pcre2/releases/download/pcre2-${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz \
-&& tar xf pcre2-${PCRE_VERSION}.tar.gz \
-&& echo "*" \
-&& echo "  *" \
-&& echo "    *  PCRE Downloaded " \
-&& echo "  *" \
-&& echo "*" \
-&& wget -q https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz \
-&& tar xf openssl-${OPENSSL_VERSION}.tar.gz \
+&& wget -q https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && tar xf openssl-${OPENSSL_VERSION}.tar.gz \
 && echo "*" \
 && echo "  *" \
 && echo "    *  OpenSSL $OPENSSL_VERSION Downloaded " \
@@ -82,9 +62,9 @@ cd /tmp \
 --with-http_auth_request_module \
 --with-http_gzip_static_module \
 --with-http_realip_module \
---with-http_ssl_module \
 --with-http_stub_status_module \
 --with-http_sub_module \
+--with-http_ssl_module \
 --with-http_v2_module \
 --with-http_v2_hpack_enc \
 --with-libatomic \
@@ -93,20 +73,21 @@ cd /tmp \
 --add-module=/tmp/ngx-${NGINX_VERSION}/headers-more-nginx-module \
 --add-module=/tmp/ngx-${NGINX_VERSION}/nginx-ct \
 --with-openssl=/tmp/ngx-${NGINX_VERSION}/openssl-${OPENSSL_VERSION} \
---with-openssl-opt="zlib no-tests enable-ec_nistp_64_gcc_128 enable-tls1_3" \
---with-cc-opt="-O3 -flto -fPIC -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wno-deprecated-declarations -Wno-strict-aliasing" \
+--with-openssl-opt="zlib no-tests enable-ec_nistp_64_gcc_128 enable-ktls" \
+--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC -DTCP_FASTOPEN=23' \
+--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Nginx Configured " \
 && echo "  *" \
 && echo "*" \
-&& make -j4 \
+&& make -j2 \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Nginx Compiled " \
 && echo "  *" \
 && echo "*" \
-&& checkinstall --pkgname=nginx --pkgversion=${NGINX_VERSION}-${CURRENT_DATE} --nodoc --install=no \
+&& checkinstall --pkgname=nginx --nodoc --install=no --pkgversion=${NGINX_VERSION}-${CURRENT_DATE} \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Nginx DEB Package Created " \
