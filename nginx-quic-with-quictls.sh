@@ -3,7 +3,7 @@
 # Nginx Compilation Script for Debian-based amd64 OS
 # Source: https://github.com/xddxdd/dockerfiles/blob/master/dockerfiles/nginx/template.Dockerfile
 # Run: bash ngx.sh
-# Dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers util-linux binutils libunwind-dev golang
+# Dependencies: checkinstall git mercurial autoconf automake libtool wget tar unzip patch libpcre3-dev zlib1g-dev libatomic-ops-dev
 # Patches: 
 #  - 
 #  - https://github.com/kn007/patch
