@@ -1,0 +1,94 @@
+Subject: [PATCH] Feature: $usec and $start_usec variables, useful for setting
+ in proxy headers before sending request to backend servers
+ so queue times can be measured.
+
+
+---
+ src/http/ngx_http_variables.c | 60 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/src/http/ngx_http_variables.c b/src/http/ngx_http_variables.c
+index b0949c7..b9a630a 100644
+--- a/src/http/ngx_http_variables.c
++++ b/src/http/ngx_http_variables.c
+@@ -108,6 +108,10 @@ static ngx_int_t ngx_http_variable_hostname(ngx_http_request_t *r,
+     ngx_http_variable_value_t *v, uintptr_t data);
+ static ngx_int_t ngx_http_variable_pid(ngx_http_request_t *r,
+     ngx_http_variable_value_t *v, uintptr_t data);
++static ngx_int_t ngx_http_variable_usec(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data);
++static ngx_int_t ngx_http_variable_start_usec(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data);
+
+ /*
+  * TODO:
+@@ -285,6 +289,12 @@ static ngx_http_variable_t  ngx_http_core_variables[] = {
+     { ngx_string("pid"), NULL, ngx_http_variable_pid,
+       0, 0, 0 },
+
++    { ngx_string("usec"), NULL, ngx_http_variable_usec,
++      0, 0, 0 },
++
++    { ngx_string("start_usec"), NULL, ngx_http_variable_start_usec,
++      0, 0, 0 },
++
+ #if (NGX_HAVE_TCP_INFO)
+     { ngx_string("tcpinfo_rtt"), NULL, ngx_http_variable_tcpinfo,
+       0, NGX_HTTP_VAR_NOCACHEABLE, 0 },
+@@ -1915,6 +1925,56 @@ ngx_http_variable_pid(ngx_http_request_t *r,
+ }
+
+
++static ngx_int_t
++ngx_http_variable_usec(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data)
++{
++    u_char     *p;
++    ngx_time_t *tp;
++    uint64_t   usec;
++
++    p = ngx_pnalloc(r->pool, NGX_INT64_LEN);
++    if (p == NULL) {
++        return NGX_ERROR;
++    }
++
++    tp = ngx_timeofday();
++    usec = (uint64_t) (tp->sec * 1000 * 1000 + tp->msec * 1000);
++
++    v->len = ngx_sprintf(p, "%L", usec) - p;
++    v->valid = 1;
++    v->no_cacheable = 0;
++    v->not_found = 0;
++    v->data = p;
++
++    return NGX_OK;
++}
++
++
++static ngx_int_t
++ngx_http_variable_start_usec(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data)
++{
++    u_char   *p;
++    uint64_t start_usec;
++
++    p = ngx_pnalloc(r->pool, NGX_INT64_LEN);
++    if (p == NULL) {
++        return NGX_ERROR;
++    }
++
++    start_usec = (uint64_t) (r->start_sec * 1000 * 1000 + r->start_msec * 1000);
++
++    v->len = ngx_sprintf(p, "%L", start_usec) - p;
++    v->valid = 1;
++    v->no_cacheable = 0;
++    v->not_found = 0;
++    v->data = p;
++
++    return NGX_OK;
++}
++
++
+ void *
+ ngx_http_map_find(ngx_http_request_t *r, ngx_http_map_t *map, ngx_str_t *match)
+ {
