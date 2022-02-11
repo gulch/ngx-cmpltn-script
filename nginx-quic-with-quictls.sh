@@ -10,9 +10,6 @@
 #  - https://github.com/xddxdd/dockerfiles/tree/master/dockerfiles/nginx
 
 NGINX_VERSION="1.21.6-QUIC"
-
-BROTLI_VERSION="v1.0.9"
-
 CURRENT_DATE=$(date +'%Y%m%d')
 
 
@@ -47,7 +44,7 @@ cd /tmp \
 && echo "*" \
 && git clone https://github.com/google/ngx_brotli.git \
 && cd ngx_brotli/deps/brotli \
-&& git clone https://github.com/google/brotli.git --single-branch --branch ${BROTLI_VERSION} . \
+&& git clone https://github.com/google/brotli.git . \
 && cd ../../.. \
 && echo "*" \
 && echo "  *" \
