@@ -3,13 +3,16 @@
 # Nginx Compilation Script for Debian-based amd64 OS
 # Source: https://github.com/xddxdd/dockerfiles/blob/master/dockerfiles/nginx/template.Dockerfile
 # Run: bash ngx.sh
-# Dependencies: checkinstall git mercurial autoconf automake libtool wget tar unzip patch libpcre3-dev zlib1g-dev libatomic-ops-dev
+# Dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers util-linux binutils libunwind-dev golang
 # Patches: 
 #  - 
 #  - https://github.com/kn007/patch
 #  - https://github.com/xddxdd/dockerfiles/tree/master/dockerfiles/nginx
 
 NGINX_VERSION="1.21.6-QUIC"
+
+BROTLI_VERSION="v1.0.9"
+
 CURRENT_DATE=$(date +'%Y%m%d')
 
 
@@ -35,10 +38,17 @@ cd /tmp \
 && echo "    *  Nginx patched: nginx-hpack-dyntls.patch " \
 && echo "  *" \
 && echo "*" \
+&& wget -q https://raw.githubusercontent.com/gulch/ngx-cmpltn-script/master/nginx-start-time.patch \
+&& patch -p1 < nginx-start-time.patch \
+&& echo "*" \
+&& echo "  *" \
+&& echo "    *  Nginx patched: nginx-start-time.patch " \
+&& echo "  *" \
+&& echo "*" \
 && git clone https://github.com/google/ngx_brotli.git \
-&& cd ngx_brotli \
-&& git submodule update --init \
-&& cd .. \
+&& cd ngx_brotli/deps/brotli \
+&& git clone https://github.com/google/brotli.git --single-branch --branch ${BROTLI_VERSION} . \
+&& cd ../../.. \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Nginx Brotli module downloaded " \
@@ -73,6 +83,7 @@ cd /tmp \
 --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid --lock-path=/var/run/nginx.lock --http-client-body-temp-path=/var/cache/nginx/client_temp --http-proxy-temp-path=/var/cache/nginx/proxy_temp --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
 --user=www-data \
 --group=www-data \
+--with-compat \
 --with-threads \
 --with-file-aio \
 --with-http_addition_module \
@@ -94,7 +105,7 @@ cd /tmp \
 --with-openssl-opt="zlib no-tests enable-ec_nistp_64_gcc_128 enable-ktls" \
 --with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC -DTCP_FASTOPEN=23' \
 --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
-&& make \
+&& make -j$(nproc) \
 && echo "*" \
 && echo "  *" \
 && echo "    *  Nginx configured & compiled " \
