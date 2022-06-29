@@ -3,13 +3,14 @@
 # Nginx Compilation Script for Debian-based amd64 OS
 # Source: https://github.com/xddxdd/dockerfiles/blob/master/dockerfiles/nginx/template.Dockerfile
 # Run: bash ngx.sh
-# Dependencies: checkinstall build-base git autoconf automake libtool wget tar gd-dev pcre-dev zlib-dev libatomic_ops-dev unzip patch linux-headers util-linux binutils libunwind-dev golang
+# Dependencies: checkinstall git autoconf automake libtool wget tar unzip patch libpcre3-dev zlib1g-dev libatomic-ops-dev libpcre2-dev
+#
 # Patches: 
 #  - 
 #  - https://github.com/kn007/patch
 #  - https://github.com/xddxdd/dockerfiles/tree/master/dockerfiles/nginx
 
-NGINX_VERSION="1.21.6-QUIC"
+NGINX_VERSION="1.23.0-QUIC"
 CURRENT_DATE=$(date +'%Y%m%d')
 
 
@@ -80,16 +81,24 @@ cd /tmp \
 --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid --lock-path=/var/run/nginx.lock --http-client-body-temp-path=/var/cache/nginx/client_temp --http-proxy-temp-path=/var/cache/nginx/proxy_temp --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
 --user=www-data \
 --group=www-data \
+--without-http_ssi_module \
+--without-http_userid_module \
+--without-http_mirror_module \
+--without-http_autoindex_module \
+--without-http_geo_module \
+--without-http_split_clients_module \
+--without-http_referer_module \
+--without-http_uwsgi_module \
+--without-http_scgi_module \
+--without-http_grpc_module \
+--without-http_memcached_module \
+--without-http_browser_module \
 --with-compat \
 --with-threads \
 --with-file-aio \
---with-http_addition_module \
 --with-http_auth_request_module \
 --with-http_gzip_static_module \
---with-http_realip_module \
 --with-http_ssl_module \
---with-http_stub_status_module \
---with-http_sub_module \
 --with-http_v2_module \
 --with-http_v2_hpack_enc \
 --with-http_v3_module \
