@@ -3,14 +3,14 @@
 # Nginx Compilation Script for Debian-based amd64 OS
 # Source: https://github.com/xddxdd/dockerfiles/blob/master/dockerfiles/nginx/template.Dockerfile
 # Run: bash ngx.sh
-# Dependencies: checkinstall git autoconf automake libtool wget tar unzip patch libpcre3-dev zlib1g-dev libatomic-ops-dev libpcre2-dev
+# Dependencies: mercurial checkinstall git autoconf automake libtool wget tar unzip patch libpcre3-dev zlib1g-dev libatomic-ops-dev libpcre2-dev
 #
 # Patches: 
 #  - 
 #  - https://github.com/kn007/patch
 #  - https://github.com/xddxdd/dockerfiles/tree/master/dockerfiles/nginx
 
-NGINX_VERSION="1.25.3-QUIC"
+NGINX_VERSION="1.25.4-QUIC"
 CURRENT_DATE=$(date +'%Y%m%d')
 
 
@@ -72,7 +72,7 @@ cd /tmp \
 && echo "    *  Nginx CT module downloaded " \
 && echo "  *" \
 && echo "*" \
-&& git clone --branch openssl-3.1.2+quic https://github.com/quictls/openssl \
+&& git clone --branch openssl-3.1.4+quic https://github.com/quictls/openssl \
 && echo "*" \
 && echo "  *" \
 && echo "    *  QuicTLS Downloaded " \
