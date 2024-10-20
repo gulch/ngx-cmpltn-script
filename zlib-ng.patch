@@ -1,0 +1,34 @@
+--- /tmp/nginx/src/http/modules/ngx_http_gzip_filter_module.c	2024-10-20 22:49:29.908454614 +0300
++++ /tmp/nginx-20241020/src/http/modules/ngx_http_gzip_filter_module.c	2024-10-20 22:42:11.065307529 +0300
+@@ -515,19 +515,20 @@
+     } else {
+         /*
+          * Another zlib variant, https://github.com/zlib-ng/zlib-ng.
+-         * It used to force window bits to 13 for fast compression level,
+-         * uses (64 + sizeof(void*)) additional space on all allocations
+-         * for alignment, 16-byte padding in one of window-sized buffers,
+-         * and 128K hash.
+          */
+ 
+-        if (conf->level == 1) {
+-            wbits = ngx_max(wbits, 13);
+-        }
+-
+-        ctx->allocated = 8192 + 16 + (1 << (wbits + 2))
+-                         + 131072 + (1 << (memlevel + 8))
+-                         + 4 * (64 + sizeof(void*));
++        ctx->allocated = 6144 // State
++                       + 65536 // Window
++                       + 65536 // Prev
++                       + 131072 // Head
++                       + 163840 // Pending
++                       + 56 + 8 // Alloc struct + padding
++#if (defined(__s390__) || defined(__s390x__) || defined(__zarch__))
++                       + 4096 // Required to fix allocation alignment
++#else
++                       + 64 // Required to fix allocation alignment
++#endif
++                       + 256; // Extra to allow for future changes
+         ctx->zlib_ng = 1;
+     }
+ }
