@@ -1,5 +1,5 @@
---- /tmp/nginx/src/http/modules/ngx_http_gzip_filter_module.c	2024-10-20 22:49:29.908454614 +0300
-+++ /tmp/nginx-20241020/src/http/modules/ngx_http_gzip_filter_module.c	2024-10-20 22:42:11.065307529 +0300
+--- a/src/http/modules/ngx_http_gzip_filter_module.c	2024-10-20 22:49:29.908454614 +0300
++++ b/src/http/modules/ngx_http_gzip_filter_module.c	2024-10-20 22:42:11.065307529 +0300
 @@ -515,19 +515,20 @@
      } else {
          /*
